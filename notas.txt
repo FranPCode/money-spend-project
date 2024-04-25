@@ -1,6 +1,0 @@
-aprender como hacer testeo de apis
-hacer que funcione la retrievve view
-usar git
-subirlo a git hub 
-
-
