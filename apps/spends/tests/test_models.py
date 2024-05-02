@@ -44,3 +44,26 @@ class CurrencyTestCase(TestCase):
                 currency_iso_code=None,
                 symbol='AAA'
             )
+
+
+class CategoryTestCase(TestCase):
+
+    def setUp(self):
+
+        Category.objects.create(
+            name='Donation'
+        )
+
+    def test_unique_data(self):
+
+        with self.assertRaises(ValidationError):
+            Category.objects.create(
+                name='donation'
+            )
+
+    def test_null_data(self):
+
+        with self.assertRaises(ValidationError):
+            Category.objects.create(
+                name=None
+            )
