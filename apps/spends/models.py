@@ -44,6 +44,15 @@ class Category(models.Model):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
+    def clean(self):
+        if self.name:
+            self.name = self.name.capitalize()
+
+    def save(self, *args, **kwargs):
+
+        self.full_clean()
+        super(Category, self).save(*args, **kwargs)
+
     def __str__(self):
         return self.name
 
