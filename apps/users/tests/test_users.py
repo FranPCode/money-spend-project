@@ -1,12 +1,13 @@
 from django.test import TestCase, SimpleTestCase, Client
 from django.urls import resolve, reverse
-from django.utils import timezone
+from rest_framework import status
+from rest_framework.test import APITestCase, APIRequestFactory
 
 from apps.users.api.urls import UserAPIView
 from apps.users.models import User
 
 
-class TestUserUrls(SimpleTestCase):
+class UserUrlsSimpleTestCase(SimpleTestCase):
 
     def test_url_users_all(self):
 
@@ -14,7 +15,7 @@ class TestUserUrls(SimpleTestCase):
         self.assertEqual(resolve(url).func.view_class, UserAPIView)
 
 
-class TestUserView(TestCase):
+class UserViewTestCase(TestCase):
 
     model = User
 
@@ -31,33 +32,35 @@ class TestUserView(TestCase):
         response = self.client.get(self.users_all_url)
         content_type = response.headers['Content-Type']
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(content_type, 'application/json')
         self.assertContains(response, self.user)
 
     def test_post(self):
         # method not allowed
         response = self.client.post(self.users_all_url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_get(self):
         # method allowed
         response = self.client.get(self.users_all_url)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_put(self):
         # method not allowed
         response = self.client.put(self.users_all_url)
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_delete(self):
         # method not allowed
         response = self.client.delete(self.users_all_url)
-        self.assertEqual(response.status_code, 405)
-        # usar django.http.status
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-class TestUserModel(TestCase):
+class UserModelTestCase(TestCase):
 
     def setUp(self):
 
@@ -77,17 +80,6 @@ class TestUserModel(TestCase):
 
         user_created = User.objects.get(username='test')
 
-        self.assertEqual(self.user.username, user_created.username)
-        self.assertEqual(self.user.email, user_created.email)
-        self.assertEqual(self.user.password, user_created.password)
-
-        # testing correct date
-        self.assertLess(self.user.date_joined, timezone.now())
-
         # testing password is tokenize
         self.assertTrue(user_created.password.startswith('pbkdf2_sha256$'))
         self.assertTrue(self.user2.password.startswith('pbkdf2_sha256$'))
-
-        # testear cosas que tu creas
-        # no testear el framework
-        # hacer clases de autocracion de modelos

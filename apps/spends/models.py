@@ -1,3 +1,5 @@
+from typing import Iterable
+from django.forms import ValidationError
 from django.urls import reverse
 from apps.users.models import User
 from django.db import models
@@ -14,6 +16,14 @@ class Currency(models.Model):
     class Meta:
         verbose_name = _("Currency")
         verbose_name_plural = _("Currencies")
+
+    def clean(self):
+        if not self.currency_iso_code.isupper():
+            raise ValidationError('Field must be upper.')
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(Currency, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.currency_iso_code
@@ -39,7 +49,8 @@ class Spends(models.Model):
 
     name = models.CharField(_("name"), max_length=50,
                             blank=False, null=False)
-    description = models.TextField(_("description"), blank=True, null=True)
+    description = models.TextField(
+        _("description"), blank=True, null=True)
     date_created = models.DateField(
         _("date created"), auto_now=True)
     amount = models.IntegerField(_("amount"), blank=False, null=False)
