@@ -13,13 +13,19 @@ class Currency(models.Model):
     symbol = models.CharField(
         _("symbol"), max_length=5, blank=False, null=False, unique=True)
 
+    valid_symbols = ['$', 'S/.', '€']
+
     class Meta:
         verbose_name = _("Currency")
         verbose_name_plural = _("Currencies")
 
     def clean(self):
-        if not self.currency_iso_code.isupper():
+        super().clean()
+        if self.currency_iso_code and not self.currency_iso_code.isupper():
             raise ValidationError('Field must be upper.')
+
+        if self.symbol and self.symbol not in self.valid_symbols:
+            raise ValidationError('Must be a valid currency symbol.')
 
     def save(self, *args, **kwargs):
         self.full_clean()
