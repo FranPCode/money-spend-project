@@ -23,24 +23,24 @@ class CurrencyTestCase(TestCase):
                 symbol='€'
             )
 
-    # def test_null_data(self):
+    def test_null_data(self):
 
-    #     with self.assertRaises(IntegrityError):
-    #         Currency.objects.create(
-    #             currency_iso_code=None,
-    #             symbol=None
-    #         )
+        with self.assertRaises(ValidationError):
+            Currency.objects.create(
+                currency_iso_code=None,
+                symbol=None
+            )
 
-    # def test_null_data2(self):
-    #     with self.assertRaises(IntegrityError):
-    #         Currency.objects.create(
-    #             currency_iso_code='aaa',
-    #             symbol=None
-    #         )
+    def test_null_data2(self):
+        with self.assertRaises(ValidationError):
+            Currency.objects.create(
+                currency_iso_code='aaa',
+                symbol=None
+            )
 
-    # def test_null_data3(self):
-    #     with self.assertRaises(IntegrityError):
-    #         Currency.objects.create(
-    #             currency_iso_code=None,
-    #             symbol='AAA'
-    #         )
+    def test_null_data3(self):
+        with self.assertRaises(ValidationError):
+            Currency.objects.create(
+                currency_iso_code=None,
+                symbol='AAA'
+            )
