@@ -9,9 +9,6 @@ ENV/
 env.bak/
 venv.bak/
 
-#pipenv
-PipFile
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
