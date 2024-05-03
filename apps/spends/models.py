@@ -64,21 +64,39 @@ class Spends(models.Model):
 
     name = models.CharField(_("name"), max_length=50,
                             blank=False, null=False)
+
     description = models.TextField(
         _("description"), blank=True, null=True)
+
     date_created = models.DateField(
         _("date created"), auto_now=True)
+
     amount = models.IntegerField(_("amount"), blank=False, null=False)
+
     category = models.ManyToManyField(
         Category, verbose_name=_("category"), blank=False)
+
     user = models.ForeignKey(User, verbose_name=_("user"),
                              on_delete=models.CASCADE, blank=False, null=False)
+
     currency = models.ManyToManyField(
         Currency, verbose_name=_("currency"),   blank=False)
 
     class Meta:
         verbose_name = _("Spend")
         verbose_name_plural = _("Spends")
+
+    def clean(self):
+
+        if self.name:
+            self.name = self.name.capitalize()
+
+        if self.description:
+            self.description = self.description.capitalize()
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(Spends, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
