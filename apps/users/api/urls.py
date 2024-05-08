@@ -1,7 +1,9 @@
 from django.urls import path
-from rest_framework.decorators import APIView
-from .api import UserAPIView
+from .views import UserListCreateAPIView, UserRetrieveUpdateDestroyAPIView
 
 urlpatterns = [
-    path('users/all/', UserAPIView.as_view(), name='api_users_all'),
+    path('users/all/', UserListCreateAPIView.as_view(),
+         name='api_users_list_create'),
+    path('users/<int:pk>', UserRetrieveUpdateDestroyAPIView.as_view(),
+         name='api_user_retrieve_update_destroy')
 ]
