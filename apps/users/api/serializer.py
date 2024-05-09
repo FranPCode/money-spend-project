@@ -37,7 +37,11 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
+
         updated_user = super().update(instance, validated_data)
-        updated_user.set_password(validated_data['password'])
+        if 'password' in validated_data.keys():
+            updated_user.set_password(validated_data['password'])
+
         updated_user.save()
+
         return updated_user
