@@ -141,10 +141,9 @@ class UserRetrieveUpdateDestroyAPIViewTestCase(APITestCase):
 
         user_updated = self.model.objects.get(pk=1)
         self.assertEqual(user_patch['username'], user_updated.username)
-        )
 
-        def test_delete(self):
-            # method allowed
-            response = self.client.delete(self.users_url)
+    def test_delete(self):
+        # method allowed
+        response = self.client.delete(self.users_url)
         self.assertEqual(response.status_code,
-        status.HTTP_204_NO_CONTENT)
+                         status.HTTP_204_NO_CONTENT)
