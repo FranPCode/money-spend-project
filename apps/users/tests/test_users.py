@@ -1,5 +1,6 @@
-from django.test import TestCase, SimpleTestCase, Client
+from django.test import TestCase, SimpleTestCase
 from django.urls import resolve, reverse
+
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
@@ -102,6 +103,9 @@ class UserRetrieveUpdateDestroyAPIViewTestCase(APITestCase):
 
     model = User
 
+    class Meta:
+        abstract = True
+
     def setUp(self) -> None:
 
         self.client = APIClient()
@@ -141,10 +145,9 @@ class UserRetrieveUpdateDestroyAPIViewTestCase(APITestCase):
 
         user_updated = self.model.objects.get(pk=1)
         self.assertEqual(user_patch['username'], user_updated.username)
-        )
 
-        def test_delete(self):
-            # method allowed
-            response = self.client.delete(self.users_url)
+    def test_delete(self):
+        # method allowed
+        response = self.client.delete(self.users_url)
         self.assertEqual(response.status_code,
-        status.HTTP_204_NO_CONTENT)
+                         status.HTTP_204_NO_CONTENT)

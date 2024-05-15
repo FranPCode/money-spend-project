@@ -11,7 +11,7 @@ class Currency(models.Model):
     currency_iso_code = models.CharField(
         _("currency iso code"), max_length=3, blank=False, null=False, unique=True)
     symbol = models.CharField(
-        _("symbol"), max_length=5, blank=False, null=False, unique=True)
+        _("symbol"), max_length=5, blank=False, null=False)
 
     valid_symbols = ['$', 'S/.', '€']
 
