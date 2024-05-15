@@ -1,17 +1,18 @@
 from django.urls import path
-from apps.spends.api_spends.views.general_views import CurrencyListAPIView, CategoryListAPIView
-from apps.spends.api_spends.views.spends_view import SpendsListAPIView, SpendsCreateAPIView, SpendsRetrieveAPIView, SpendsDestroyAPIView
+from apps.spends.api_spends.views.general_views import CategoryListCreateAPIView, CategoryRetrieveUpdateDestroyAPIView, CurrencyListCreateAPIView, CurrencyRetrieveUpdateDestroyAPIView
+from apps.spends.api_spends.views.spends_view import SpendsListCreateAPIView, SpendsRetrieveUpdateDestroyAPIView
+
 urlpatterns = [
-    path('currencies/all/', CurrencyListAPIView.as_view(),
-         name='api_currencies_all'),
-    path('categories/all', CategoryListAPIView.as_view(),
-         name='api_categories_all'),
-    path('spends/all/', SpendsListAPIView.as_view(),
-         name='api_spends_all'),
-    path('create/spends', SpendsCreateAPIView.as_view(),
-         name='api_create_spends'),
-    path('spends/<int:pk>/', SpendsRetrieveAPIView.as_view(),
-         name='api_retrieve_spends'),
-    path('destroy/spends/<int:pk>', SpendsDestroyAPIView.as_view(),
-         name='api_destroy_spends'),
+    path('currencies/all/', CurrencyListCreateAPIView.as_view(),
+         name='api_currencies_list_create'),
+    path('currencies/<int:pk>/', CurrencyRetrieveUpdateDestroyAPIView.as_view(),
+         name='api_currencies_retrieve_update_destroy'),
+    path('categories/all/', CategoryListCreateAPIView.as_view(),
+         name='api_categories_list_create'),
+    path('categories/<int:pk>/', CategoryRetrieveUpdateDestroyAPIView.as_view(),
+         name='api_categories_retrieve_update_destroy'),
+    path('spends/all/', SpendsListCreateAPIView.as_view(),
+         name='api_spends_list_create'),
+    path('spends/<int:pk>/', SpendsRetrieveUpdateDestroyAPIView.as_view(),
+         name='api_spends_retrieve_update_destroy'),
 ]

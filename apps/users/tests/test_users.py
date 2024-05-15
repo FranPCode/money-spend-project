@@ -1,5 +1,6 @@
-from django.test import TestCase, SimpleTestCase, Client
+from django.test import TestCase, SimpleTestCase
 from django.urls import resolve, reverse
+
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
@@ -101,6 +102,9 @@ class UserListCreateAPIViewTestCase(APITestCase):
 class UserRetrieveUpdateDestroyAPIViewTestCase(APITestCase):
 
     model = User
+
+    class Meta:
+        abstract = True
 
     def setUp(self) -> None:
 
