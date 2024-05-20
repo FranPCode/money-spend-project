@@ -17,7 +17,6 @@ class User(AbstractUser):
         return reverse("User_detail", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
-
-        if not self.pk or self._password != self.password:
-            self.password = make_password(self.password)
+        if not self.password.startswith('pbkdf2_sha256$'):
+            self.set_password(self.password)
         super().save(*args, **kwargs)
