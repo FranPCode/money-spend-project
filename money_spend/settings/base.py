@@ -31,13 +31,13 @@ BASE_APPS = [
 LOCAL_APPS = [
     'apps.users',
     'apps.spends',
-    'apps.jason_web_token'
 ]
 
 THIRD_APPS = [
     'rest_framework',
     'drf_yasg',
     'rest_framework_simplejwt',
+
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -96,7 +96,10 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 SIMPLE_JWT = {
