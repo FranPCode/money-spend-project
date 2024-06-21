@@ -1,42 +1,65 @@
+"""Views for user API and JWT."""
+
 from rest_framework_simplejwt.views import (
     TokenBlacklistView,
     TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from drf_yasg.utils import swagger_auto_schema
 
-from rest_framework import serializers, status
+from rest_framework import status
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
-from apps.users.api.serializer import UserSerializer
 from apps.users.models import User
+from apps.users.api.serializer import (
+    UserSerializer,
+    TokenBlacklistResponseSerializer,
+    TokenObtainPairResponseSerializer,
+    TokenRefreshResponseSerializer,
+    TokenVerifyResponseSerializer
+)
 
 
 class UserListCreateAPIView(generics.ListCreateAPIView):
+    """View for creating and listing users."""
 
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_active=True)
+    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    def get_permissions(self):
+        return (
+            [perm() for perm in self.permission_classes]
+            if self.request.method != 'POST' else []
+        )
+
+    def get_authenticators(self):
+        return (
+            [auth() for auth in self.authentication_classes]
+            if self.request.method != 'POST' else []
+        )
 
 
-class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """View for user details."""
 
     serializer_class = UserSerializer
-    queryset = User.objects.all()
+    queryset = User.objects.filter(is_active=True)
+    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
-
-class TokenObtainPairResponseSerializer(serializers.Serializer):
-    access = serializers.CharField()
-    refresh = serializers.CharField()
-
-    def create(self, validated_data):
-        raise NotImplementedError()
-
-    def update(self, instance, validated_data):
-        raise NotImplementedError()
+    def get_object(self):
+        """Return authenticated user."""
+        return self.request.user
 
 
 class DecoratedTokenObtainPairView(TokenObtainPairView):
+    """Obtain pair view."""
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: TokenObtainPairResponseSerializer,
@@ -46,17 +69,11 @@ class DecoratedTokenObtainPairView(TokenObtainPairView):
         return super().post(request, *args, **kwargs)
 
 
-class TokenRefreshResponseSerializer(serializers.Serializer):
-    access = serializers.CharField()
-
-    def create(self, validated_data):
-        raise NotImplementedError()
-
-    def update(self, instance, validated_data):
-        raise NotImplementedError()
-
-
 class DecoratedTokenRefreshView(TokenRefreshView):
+    """Refresh token view."""
+    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: TokenRefreshResponseSerializer,
@@ -66,15 +83,11 @@ class DecoratedTokenRefreshView(TokenRefreshView):
         return super().post(request, *args, **kwargs)
 
 
-class TokenVerifyResponseSerializer(serializers.Serializer):
-    def create(self, validated_data):
-        raise NotImplementedError()
-
-    def update(self, instance, validated_data):
-        raise NotImplementedError()
-
-
 class DecoratedTokenVerifyView(TokenVerifyView):
+    """Verify token view."""
+    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: TokenVerifyResponseSerializer,
@@ -84,15 +97,11 @@ class DecoratedTokenVerifyView(TokenVerifyView):
         return super().post(request, *args, **kwargs)
 
 
-class TokenBlacklistResponseSerializer(serializers.Serializer):
-    def create(self, validated_data):
-        raise NotImplementedError()
-
-    def update(self, instance, validated_data):
-        raise NotImplementedError()
-
-
 class DecoratedTokenBlacklistView(TokenBlacklistView):
+    """Token blacklist view."""
+    authentication_classes = [JWTAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: TokenBlacklistResponseSerializer,

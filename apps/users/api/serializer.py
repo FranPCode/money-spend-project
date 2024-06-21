@@ -1,10 +1,14 @@
+"""Serializer for users and token."""
+
 from rest_framework import serializers
-from apps.users.models import User
+
+from django.contrib.auth import get_user_model
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Serializer for users."""
     class Meta:
-        model = User
+        model = get_user_model()
         fields = [
             "id",
             "username",
@@ -12,36 +16,71 @@ class UserSerializer(serializers.ModelSerializer):
             "password",
             "first_name",
             "last_name",
-            # "date_joined",
-            # "last_login",
+            "date_joined",
+            "last_login",
             "is_active",
             "is_superuser",
             "is_staff",
             "groups",
             "user_permissions",
         ]
+        read_only_fields = ['id', "date_joined", "last_login",]
+        extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
     def create(self, validated_data):
+        """Create user serializer."""
+        return get_user_model().objects.create(**validated_data)
 
-        groups_data = validated_data.pop('groups', [])
-        user_permissions_data = validated_data.pop('user_permissions', [])
-        password = validated_data.pop('password')
+    def update(self, instance, validated_data):
+        """Update and return user."""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
 
-        user = User.objects.create(**validated_data)
-        user.set_password(password)
-        user.save()
-
-        user.groups.set(groups_data)
-        user.user_permissions.set(user_permissions_data)
+        if password:
+            user.set_password(password)
+            user.save()
 
         return user
 
+
+class TokenObtainPairResponseSerializer(serializers.Serializer):
+    """Token obtain."""
+    access = serializers.CharField()
+    refresh = serializers.CharField()
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
     def update(self, instance, validated_data):
+        raise NotImplementedError()
 
-        updated_user = super().update(instance, validated_data)
-        if 'password' in validated_data.keys():
-            updated_user.set_password(validated_data['password'])
 
-        updated_user.save()
+class TokenRefreshResponseSerializer(serializers.Serializer):
+    """Token refresh."""
+    access = serializers.CharField()
 
-        return updated_user
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
+
+
+class TokenVerifyResponseSerializer(serializers.Serializer):
+    """Token verify."""
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
+
+
+class TokenBlacklistResponseSerializer(serializers.Serializer):
+    """Token for blacklist users."""
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()

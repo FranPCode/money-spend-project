@@ -1,15 +1,23 @@
+"""URLs for users and JWT."""
 from rest_framework_simplejwt.views import TokenVerifyView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView
+)
+
 from django.urls import path
-from .views import UserListCreateAPIView, UserRetrieveUpdateDestroyAPIView
+
+from .views import (
+    UserListCreateAPIView,
+    UserDetailAPIView,
+)
+
+app_name = 'user'
 
 urlpatterns = [
-    path('api/users/all/', UserListCreateAPIView.as_view(),
-         name='api_users_list_create'),
-    path('api/users/<int:pk>', UserRetrieveUpdateDestroyAPIView.as_view(),
-         name='api_user_retrieve_update_destroy'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/token/', TokenObtainPairView.as_view(),
-         name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('user/all/', UserListCreateAPIView.as_view(), name='user-list'),
+    path('user/<int:pk>', UserDetailAPIView.as_view(), name='user-detail'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token-verify'),
+    path('token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
 ]
