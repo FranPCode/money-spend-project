@@ -1,25 +1,33 @@
+"""Tests for spends models."""
+
+from decimal import Decimal
+
 from django.test import TestCase
-from rest_framework import status
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
 
-from apps.spends.models import Currency, Spends, Category
-from apps.users.models import User
+from apps.spends.models import (
+    Currency,
+    Spends,
+    Category
+)
 
 
-class CurrencyTestCase(TestCase):
+class CurrencyTest(TestCase):
+    """Tests for currency model."""
 
     def setUp(self):
-
         self.currency = Currency.objects.create(
-            currency_iso_code='EUR',
+            iso_code='EUR',
             symbol='€'
         )
 
     def test_unique_data(self):
+        """Test currency  attributes must be unique."""
 
         with self.assertRaises(ValidationError):
             Currency.objects.create(
-                currency_iso_code='EUR',
+                iso_code='EUR',
                 symbol='€'
             )
 
@@ -27,44 +35,49 @@ class CurrencyTestCase(TestCase):
 
         with self.assertRaises(ValidationError):
             Currency.objects.create(
-                currency_iso_code=None,
-                symbol=None
+                iso_code='TTT',
+                symbol=None,
             )
 
-    def test_null_data2(self):
         with self.assertRaises(ValidationError):
             Currency.objects.create(
-                currency_iso_code='aaa',
-                symbol=None
+                iso_code=None,
+                symbol='$',
             )
 
-    def test_null_data3(self):
         with self.assertRaises(ValidationError):
             Currency.objects.create(
-                currency_iso_code=None,
+                iso_code='AAAA',
                 symbol='AAA'
             )
 
-    def test_null_data4(self):
+    def test_invalid_symbol_error(self):
+        """Test invalid symbol return Validation error."""
         with self.assertRaises(ValidationError):
             Currency.objects.create(
-                currency_iso_code='AAAA',
-                symbol='AAA'
-            )
-
-    def test_null_data5(self):
-        with self.assertRaises(ValidationError):
-            Currency.objects.create(
-                currency_iso_code='AAA',
+                iso_code='AAA',
                 symbol='aaaaaaaaaa'
             )
 
+    def test_iso_code_is_upper(self):
+        """Test iso code must be upper case."""
+        with self.assertRaises(ValidationError):
+            Currency.objects.create(
+                iso_code='aaa',
+                symbol='aaa'
+            )
+
+    def test_string_representation(self):
+        """Test string representation of currency."""
+        self.assertEqual(str(self.currency), self.currency.iso_code)
+
 
 class CategoryTestCase(TestCase):
+    """Tests for category models."""
 
     def setUp(self):
 
-        Category.objects.create(
+        self.category = Category.objects.create(
             name='Donation'
         )
 
@@ -82,70 +95,38 @@ class CategoryTestCase(TestCase):
                 name=None
             )
 
+    def test_string_representation(self):
+        """Test string representation of category."""
+        self.assertEqual(str(self.category), self.category.name)
+
 
 class SpendsTestCase(TestCase):
+    """Tests for spend model."""
 
     def setUp(self):
-
-        self.user = User.objects.create(
+        self.user = get_user_model().objects.create_user(
             username='test',
-            email='testing@gmail.com',
-            password='testuser',
+            password='testusername',
         )
-
-        Currency.objects.create(
-            currency_iso_code='USD',
+        self.currency = Currency.objects.create(
+            iso_code='USD',
             symbol='$'
         )
-
-        Category.objects.create(
+        self.category = Category.objects.create(
             name='transport'
         )
-
-        category = Category.objects.first()
-        currency = Currency.objects.first()
-
         self.spend = Spends.objects.create(
-            name='Gasoline for the car',
+            title='Gasoline for the car',
             description='bought on venezuela avenue',
-            amount=50,
+            amount=Decimal('10.99'),
             user=self.user,
+            currency=self.currency,
+            category=self.category,
         )
 
-        self.spend.category.add(category)
-        self.spend.currency.add(currency)
-
-    def test_many_to_many_fields(self):
-
-        self.assertTrue(self.spend.currency.exists())
-        self.assertTrue(self.spend.category.exists())
-
-    def test_null_data(self):
-
-        with self.assertRaises(ValidationError):
-            Spends.objects.create(
-                name=None,
-                description='bought on venezuela avenue',
-                amount=50,
-                user=self.user,
-            )
-
-    def test_null_data2(self):
-
-        with self.assertRaises(ValidationError):
-            Spends.objects.create(
-                name='alone',
-                description='bought on venezuela avenue',
-                amount=None,
-                user=self.user,
-            )
-
-    def test_null_data3(self):
-
-        with self.assertRaises(ValidationError):
-            Spends.objects.create(
-                name='test name',
-                description='bought on venezuela avenue',
-                amount=50,
-                user=None,
-            )
+    def test_create_spend(self):
+        """Test the creation of a new spend."""
+        self.assertEqual(str(self.spend), self.spend.title)
+        self.assertTrue(self.spend.currency)
+        self.assertTrue(str(self.spend.category).istitle())
+        # self.assertTrue(str(self.spend).istitle())

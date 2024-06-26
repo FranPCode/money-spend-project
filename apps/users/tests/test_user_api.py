@@ -88,8 +88,9 @@ class PrivateApiTest(APITestCase):
 
         response = self.client.get(USER_URL)
 
-        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertNotIn('password', response.data)
 
     def test_retrieve_user(self):
         """Test retrieveing a user."""
@@ -101,6 +102,7 @@ class PrivateApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotIn('password', response.data)
 
     def test_update_user(self):
         """Test update a user."""
@@ -160,6 +162,18 @@ class TestTokenView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('refresh', response.data)
         self.assertIn('access', response.data)
+        self.assertIn('access_token', response.cookies)
+        self.assertIn('refresh_token', response.cookies)
+
+        access_cookie = response.cookies['access_token']
+        self.assertTrue(access_cookie['httponly'])
+        self.assertTrue(access_cookie['secure'])
+        self.assertEqual(access_cookie['samesite'], 'Lax')
+
+        refresh_cookie = response.cookies['refresh_token']
+        self.assertTrue(refresh_cookie['httponly'])
+        self.assertTrue(refresh_cookie['secure'])
+        self.assertEqual(refresh_cookie['samesite'], 'Lax')
 
     def test_verify_token(self):
         """Test verify token is valid."""
