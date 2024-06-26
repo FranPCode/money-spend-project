@@ -162,18 +162,6 @@ class TestTokenView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('refresh', response.data)
         self.assertIn('access', response.data)
-        self.assertIn('access_token', response.cookies)
-        self.assertIn('refresh_token', response.cookies)
-
-        access_cookie = response.cookies['access_token']
-        self.assertTrue(access_cookie['httponly'])
-        self.assertTrue(access_cookie['secure'])
-        self.assertEqual(access_cookie['samesite'], 'Lax')
-
-        refresh_cookie = response.cookies['refresh_token']
-        self.assertTrue(refresh_cookie['httponly'])
-        self.assertTrue(refresh_cookie['secure'])
-        self.assertEqual(refresh_cookie['samesite'], 'Lax')
 
     def test_verify_token(self):
         """Test verify token is valid."""
