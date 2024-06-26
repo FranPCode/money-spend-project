@@ -13,6 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from apps.users.models import User
 from apps.users.api.serializer import (
@@ -58,7 +59,7 @@ class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return self.request.user
 
 
-class DecoratedTokenObtainPairView(TokenObtainPairView):
+class CustomTokenObtainPairView(TokenObtainPairView):
     """Obtain pair view."""
     @swagger_auto_schema(
         responses={
@@ -66,7 +67,29 @@ class DecoratedTokenObtainPairView(TokenObtainPairView):
         }
     )
     def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+        response = super().post(request, *args, **kwargs)
+        tokens = response.data
+        response.set_cookie(
+            key='access_token',
+            value=tokens['access'],
+            httponly=True,
+            secure=True,  # Solo si usas HTTPS
+            samesite='Lax'
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=tokens['refresh'],
+            httponly=True,
+            secure=True,  # Solo si usas HTTPS
+            samesite='Lax'
+        )
+        return response
+
+    def delete(self, request, *args, **kwargs):
+        response = Response(status=status.HTTP_204_NO_CONTENT)
+        response.delete_cookie('access_token')
+        response.delete_cookie('refresh_token')
+        return response
 
 
 class DecoratedTokenRefreshView(TokenRefreshView):

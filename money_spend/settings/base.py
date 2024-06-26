@@ -37,8 +37,8 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
-    'drf_yasg',
     'rest_framework_simplejwt',
+    'drf_yasg',
 
 ]
 
@@ -54,16 +54,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    )
-}
 
 ROOT_URLCONF = 'money_spend.urls'
 
