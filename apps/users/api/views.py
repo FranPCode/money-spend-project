@@ -59,37 +59,15 @@ class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
         return self.request.user
 
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    """Obtain pair view."""
+class DecoratedTokenObtainPairView(TokenObtainPairView):
+    """View for obtaining a new pair of JWT tokens."""
     @swagger_auto_schema(
         responses={
             status.HTTP_200_OK: TokenObtainPairResponseSerializer,
         }
     )
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        tokens = response.data
-        response.set_cookie(
-            key='access_token',
-            value=tokens['access'],
-            httponly=True,
-            secure=True,  # Solo si usas HTTPS
-            samesite='Lax'
-        )
-        response.set_cookie(
-            key='refresh_token',
-            value=tokens['refresh'],
-            httponly=True,
-            secure=True,  # Solo si usas HTTPS
-            samesite='Lax'
-        )
-        return response
-
-    def delete(self, request, *args, **kwargs):
-        response = Response(status=status.HTTP_204_NO_CONTENT)
-        response.delete_cookie('access_token')
-        response.delete_cookie('refresh_token')
-        return response
+        return super().post(request, *args, **kwargs)
 
 
 class DecoratedTokenRefreshView(TokenRefreshView):
