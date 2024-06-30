@@ -242,3 +242,73 @@ class PrivateSpendTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Category.objects.filter(id=self.category.id).exists())
+
+    def test_filter_by_currency(self):
+        """Test filtering spends by currency."""
+        euro = Currency.objects.create(
+            iso_code='EUR',
+            symbol='€'
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=self.currency,
+            category=self.category
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=self.currency,
+            category=self.category
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=euro,
+            category=self.category
+        )
+        response = self.client.get(SPEND_URL, {'currency': self.currency.id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+    def test_filter_by_category(self):
+        """Test filtering spends by category."""
+        transport = Category.objects.create(
+            name='Transport'
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=self.currency,
+            category=self.category
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=self.currency,
+            category=self.category
+        )
+        Spends.objects.create(
+            title='Euro Spend',
+            user=self.user,
+            description='Euro Spend Description',
+            amount='3.99',
+            currency=self.currency,
+            category=transport
+        )
+
+        response = self.client.get(SPEND_URL, {'category': transport.id})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
