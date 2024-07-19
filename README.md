@@ -1,36 +1,33 @@
-Proyecto de gestion de gastos con seguimiento por fechas, categoria y moneda.
+# Money Spend Project
 
-Backend con Django y Django REST
-Frontend con React (no implementado por ahora)
+MIT LICENSE
 
-Uso:
-Hasta ahora solo se tiene implementado la API y su documentacion en swagger.
+Money Spend Project es una API para registrar gastos en distintas divisas, con seguimiento por fechas, categoría y moneda. El backend está implementado con Django y Django REST framework. 
 
-Aqui estan las urls disponibles:
--http://127.0.0.1:8000/api/spends/all
--http://127.0.0.1:8000/api/spends/{pk}
--http://127.0.0.1:8000/api/categories/all
--http://127.0.0.1:8000/api/categories/{pk}
--http://127.0.0.1:8000/api/currencies/all
--http://127.0.0.1:8000/api/currencies/{pk}
--http://127.0.0.1:8000/api/users/all
--http://127.0.0.1:8000/api/users/{pk}
+## Instalación
 
-Como instalar:
-Para el entorno virtual uso "pipenv".
-$ pip install pipenv
+### Requisitos Previos
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-Se activa el entorno virtual
-$ pipenv shell
+## Configurar Variables de entorno.
+    Crear un archivo .env en la raiz del proyecto.
+    ejemplo:
+        DB_HOST=db
+        DB_NAME=nombre_de_tu_base_de_datos
+        DB_USER=tu_usuario
+        DB_PASS=tu_contraseña
+        DJANGO_SECRET_KEY=tu_clave_secreta
 
-Se instalan los paquetes de pipfile.lock
-$ pipenv install --ignore-pipfile
+## Ejecucion del proyecto.
 
+    docker compose up --build
 
-Se necesita cambiar el interprete al interprete del entorno virtual.
+## Documentacion.
 
-Para iniciar el proyecto:
-$ manage.py runserver
+    La pagina principal es la documentacions hecha con swagger.
 
-
-
+### Clonar el Repositorio
+```sh
+git clone https://github.com/HEAVYSHOCK/money-spend-project.git
+cd money-spend-project
