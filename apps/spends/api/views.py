@@ -27,6 +27,9 @@ class SpendsListCreateAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         """Retrieve spends for authenticated user."""
+        if self.request.user.is_authenticated:
+            return self.queryset.filter(user=self.request.user)
+
         currency = self.request.query_params.get('currency')
         category = self.request.query_params.get('category')
         queryset = self.queryset
@@ -38,7 +41,7 @@ class SpendsListCreateAPIView(ListCreateAPIView):
             queryset = queryset.filter(category__id__in=category)
 
         return queryset.filter(
-            user=self.request.user,
+            user=self.request.user
         ).order_by('id').distinct()
 
 
@@ -60,7 +63,8 @@ class SpendsDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Spends.objects.all()
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return self.queryset.filter(user=self.request.user)
 
 
 class CurrencyDetailAPIView(RetrieveUpdateDestroyAPIView):
