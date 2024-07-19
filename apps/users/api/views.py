@@ -56,7 +56,8 @@ class UserDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_object(self):
         """Return authenticated user."""
-        return self.request.user
+        if self.request.user.is_authenticated:
+            return self.request.user
 
 
 class DecoratedTokenObtainPairView(TokenObtainPairView):

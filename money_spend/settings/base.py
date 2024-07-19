@@ -2,6 +2,7 @@
 
 from datetime import timedelta
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -11,10 +12,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tjp0sgkxeq8(j$zk@_76(x#nvshq18u^fz965a_@ls^3lkb%b8'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -31,8 +32,8 @@ BASE_APPS = [
 ]
 
 LOCAL_APPS = [
-    'apps.users',
     'apps.spends',
+    'apps.users',
 ]
 
 THIRD_APPS = [
@@ -42,7 +43,7 @@ THIRD_APPS = [
 
 ]
 
-INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
+INSTALLED_APPS = THIRD_APPS + LOCAL_APPS + BASE_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

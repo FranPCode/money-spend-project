@@ -97,7 +97,7 @@ class Spends(models.Model):
     )
     amount = models.DecimalField(
         _("Amount"),
-        max_digits=1000000,
+        max_digits=1000,
         decimal_places=2
     )
     category = models.ForeignKey(

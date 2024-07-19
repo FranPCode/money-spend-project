@@ -26,7 +26,8 @@ class SpendsListCreateAPIView(ListCreateAPIView):
     queryset = Spends.objects.all()
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return self.queryset.filter(user=self.request.user)
 
 
 class CurrencyListCreateAPIView(ListCreateAPIView):
@@ -47,7 +48,8 @@ class SpendsDetailAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Spends.objects.all()
 
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            return self.queryset.filter(user=self.request.user)
 
 
 class CurrencyDetailAPIView(RetrieveUpdateDestroyAPIView):

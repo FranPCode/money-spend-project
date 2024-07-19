@@ -87,6 +87,20 @@ class PublicSpendTest(APITestCase):
             self.assertEqual(patch.status_code, status.HTTP_401_UNAUTHORIZED)
             self.assertEqual(delete.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_unauthenticated_user_no_id_detail(self):
+        """Test unauthorized user no have id."""
+        user = get_user_model().objects.create_user(
+            username='testserp098',
+            password='testingpass',
+        )
+        response = self.client.get(detail_url('spend', user.id))
+        self.assertNotIn('id', response.data)
+
+    def test_unauthenticated_user_no_list(self):
+        """Test unauthorized user no have id."""
+        response = self.client.get(SPEND_URL)
+        self.assertNotIn('id', response.data)
+
 
 class PrivateSpendTest(APITestCase):
     """Tests for authorized users."""
@@ -242,3 +256,13 @@ class PrivateSpendTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertFalse(Category.objects.filter(id=self.category.id).exists())
+
+    def test_authenticated_user_id_detail(self):
+        """Test authorized user have id."""
+        response = self.client.get(detail_url('spend', self.user.id))
+        self.assertIn('id', response.data)
+
+    def test_authenticated_user_id_list(self):
+        """Test authorized user have id."""
+        response = self.client.get(SPEND_URL)
+        self.assertIn('id', response.data[0])

@@ -57,6 +57,16 @@ class PublicApiTest(APITestCase):
         self.assertEqual(put.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(delete.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_unauthenticated_user_request(self):
+        """Test get user id when is authenticated"""
+        user = get_user_model().objects.create_user(
+            username='testuser1234',
+            password='testingpass3333',
+        )
+        response = self.client.get(detail_url(user.id))
+
+        self.assertNotIn('id', response.data)
+
 
 class PrivateApiTest(APITestCase):
     """Tests for authorized users."""
@@ -131,6 +141,11 @@ class PrivateApiTest(APITestCase):
         response = self.client.delete(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_authenticated_user_have_id(self):
+        """Test the authenticated user id."""
+        response = self.client.get(detail_url(self.user.id))
+        self.assertIn('id', response.data)
 
 
 class TestTokenView(APITestCase):
